@@ -1,12 +1,13 @@
-#define WalkingTabSize 12
-#define DELAY 700
+#define WAVE_GATE_LENGTH 12
+#define RIPPLE_GATE_LENGTH 8
+#define DELAY 1000    //700
 #define DELAY_DOWN 100
 
 uint8_t indice = 0;
 
 uint16_t  slow_wave[12] = {
-0b010000000010,  //RFU & LBF
-//LBF makes the leg move downward from the second loop, it is irrelevant the first time
+ 
+0b010000000010,  //RFU & LBF  //LBF makes the leg move downward from the second loop, it is irrelevant the first time
 0b110000000000, //RFU & RFF
 0b100100000000, //RFF & RMU
 0b001100000000, //RMU & RMF
@@ -17,7 +18,26 @@ uint16_t  slow_wave[12] = {
 0b000000100100,  //LFF & LMU
 0b000000001100, //LMU & LMF
 0b000000001001,  //LMF & LBU
-0b000000000011  //LBU & LBF
+0b000000000011,  //LBU & LBF
+
+/*
+0b000000000000
+*/
+};
+
+uint16_t  ripple_wave  [12] = {
+ 
+0b000011110000, // 
+0b000110100000, //RFU & RFF
+0b001100000000, //RFF & RMU
+0b011000000001, //RMU & RMF
+0b110000000011, //RMF & RBU
+0b100000000110, //RBU & RBF
+0b000000001100, //RBF & LFU
+0b000001011000, //LFU & LFF
+/*
+0b000000000000
+*/
 };
 
 void setState(uint16_t newState) {
@@ -61,8 +81,9 @@ void setup() {
 
 void loop() {
   Serial.println("Hello world.");
-  setState(slow_wave[indice]);
+  //setState(slow_wave[indice]);
+  setState(ripple_wave[indice]);
   indice++;
-  if ( indice >= WalkingTabSize ) indice = 0;
- 
+  //if ( indice >= WAVE_GATE_LENGTH ) indice = 0;
+  if ( indice >= RIPPLE_GATE_LENGTH ) indice = 0; 
 }
