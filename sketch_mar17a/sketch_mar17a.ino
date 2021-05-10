@@ -1,7 +1,8 @@
 #define WAVE_GATE_LENGTH 12
 #define RIPPLE_GATE_LENGTH 8
-#define DELAY 1000    //700
-#define DELAY_DOWN 100
+#define TRIPOD_GATE_LENGTH 4
+#define TETRAPOD_GATE_LENGTH 6
+#define DELAY 800    //700
 
 uint8_t indice = 0;
 
@@ -19,10 +20,6 @@ uint16_t  slow_wave[12] = {
 0b000000001100, //LMU & LMF
 0b000000001001,  //LMF & LBU
 0b000000000011,  //LBU & LBF
-
-/*
-0b000000000000
-*/
 };
 
 uint16_t  ripple_wave  [12] = {
@@ -35,13 +32,27 @@ uint16_t  ripple_wave  [12] = {
 0b100000000110, //RBU & RBF
 0b000000001100, //RBF & LFU
 0b000001011000, //LFU & LFF
-/*
-0b000000000000
-*/
+};
+
+uint16_t  tripod_gate  [4] = {
+ 
+0b110011001100, // 
+0b100110011001, //
+0b001100110011, //
+0b011000100110, //
+};
+
+uint16_t  tetrapod_gate  [6] = {
+ 
+0b110000000011, // 
+0b100001000110, //
+0b000011001100, //
+0b000110011000, //
+0b001100110000, //
+0b011000100001
 };
 
 void setState(uint16_t newState) {
-  
   int i_b=0;
   int i_c=0;
   int i_d=0;
@@ -80,10 +91,15 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("Hello world.");
   //setState(slow_wave[indice]);
-  setState(ripple_wave[indice]);
-  indice++;
+  //setState(ripple_wave[indice]);
+  //setState(tripod_gate[indice]);
+  //setState(tetrapod_gate[indice]);
+  
   //if ( indice >= WAVE_GATE_LENGTH ) indice = 0;
-  if ( indice >= RIPPLE_GATE_LENGTH ) indice = 0; 
+  //if ( indice >= RIPPLE_GATE_LENGTH ) indice = 0; 
+  //if ( indice >= TRIPOD_GATE_LENGTH ) indice = 0; 
+  //if ( indice >= TETRAPOD_GATE_LENGTH ) indice = 0; 
+
+  indice++;
 }
