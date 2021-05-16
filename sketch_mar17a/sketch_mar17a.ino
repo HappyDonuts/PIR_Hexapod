@@ -1,55 +1,80 @@
-#define WAVE_GATE_LENGTH 12
-#define RIPPLE_GATE_LENGTH 8
-#define TRIPOD_GATE_LENGTH 4
-#define TETRAPOD_GATE_LENGTH 6
+#define WAVE_GAIT_LENGTH 12
+#define RIPPLE_GAIT_LENGTH 8
+#define TRIPOD_GAIT_LENGTH 4
+#define TETRAPOD_GAIT_LENGTH 6
 #define DELAY 800    //700
+
+const uint16_t RFF = 0b100000000000;  // Right Front Forward
+const uint16_t RFU = 0b010000000000;  // Right Front Up
+const uint16_t RMF = 0b001000000000;  // Right Middle Forward
+const uint16_t RMU = 0b000100000000;  // Right Middle Up
+const uint16_t RBF = 0b000010000000;  // Right Back Forward
+const uint16_t RBU = 0b000001000000;  // Right Back Up
+const uint16_t LFF = 0b000000100000;  // Left Front Forward
+const uint16_t LFU = 0b000000010000;  // Left Front Up
+const uint16_t LMF = 0b000000001000;  // Left Middle Forward
+const uint16_t LMU = 0b000000000100;  // Left Middle Up
+const uint16_t LBF = 0b000000000010;  // Left Back Forward
+const uint16_t LBU = 0b000000000001;  // Left Back Up
 
 uint8_t indice = 0;
 
 uint16_t  slow_wave[12] = {
- 
-0b010000000010,  //RFU & LBF  //LBF makes the leg move downward from the second loop, it is irrelevant the first time
-0b110000000000, //RFU & RFF
-0b100100000000, //RFF & RMU
-0b001100000000, //RMU & RMF
-0b001001000000, //RMF & RBU
-0b000011000000, //RBU & RBF
-0b000010010000, //RBF & LFU
-0b000000110000, //LFU & LFF
-0b000000100100,  //LFF & LMU
-0b000000001100, //LMU & LMF
-0b000000001001,  //LMF & LBU
-0b000000000011,  //LBU & LBF
+  RFU|LBF,  
+  RFF|RFU,
+  RFF|RMU,
+  RMF|RMU,
+  RMF|RBU,
+  RBF|RBU,
+  RBF|LFU,
+  LFF|LFU,
+  LFF|LMU,
+  LMF|LMU,
+  LMF|LBU,
+  LBF|LBU
 };
 
-uint16_t  ripple_wave  [12] = {
- 
-0b000011110000, // 
-0b000110100000, //RFU & RFF
-0b001100000000, //RFF & RMU
-0b011000000001, //RMU & RMF
-0b110000000011, //RMF & RBU
-0b100000000110, //RBU & RBF
-0b000000001100, //RBF & LFU
-0b000001011000, //LFU & LFF
+uint16_t  ripple_wave  [8] = {
+  RBF|RBU|LFF|LFU, 
+  RMU|RBF|LFF, 
+  RMF|RMU, 
+  RFU|RMF|LBU, 
+  RFF|RFU|LBF|LBU, 
+  RFF|LMU|LBF, 
+  LMF|LMU, 
+  RBU|LFU|LMF,
 };
 
-uint16_t  tripod_gate  [4] = {
- 
-0b110011001100, // 
-0b100110011001, //
-0b001100110011, //
-0b011000100110, //
+uint16_t  tripod_gait  [4] = {
+  RBU|RFU|LMU|RBF|RFF|LMF,
+  RBF|RFF|LMF|RMU|LBU|LFU,
+  RMU|LBU|LFU|RMF|LBF|LFF,
+  RMF|LBF|LFF|RBU|RFU|LMU
 };
 
-uint16_t  tetrapod_gate  [6] = {
- 
-0b110000000011, // 
-0b100001000110, //
-0b000011001100, //
-0b000110011000, //
-0b001100110000, //
-0b011000100001
+uint16_t  tetrapod_gait  [6] = {
+  RFU|LBU|RFF|LBF,
+  RFF|LBF|RBU|LMU,
+  RBU|LMU|RBF|LMF,
+  RBF|LMF|RMU|LFU,
+  RMU|LFU|LFF|RMF,
+  LFF|RMF|RFU|LBU
+};
+
+// NOT TESTED
+uint16_t  tripod_gait_right  [4] = {
+  RBU|RFU|LMU|LMF,
+  LMF|RMU|LBU|LFU,
+  RMU|LBU|LFU|LBF|LFF,
+  LBF|LFF|RBU|RFU|LMU
+};
+
+// NOT TESTED
+uint16_t  tripod_gait_left  [4] = {
+  RBU|RFU|LMU|RBF|RFF,
+  RBF|RFF|RMU|LBU|LFU,
+  RMU|LBU|LFU|RMF,
+  RMF|RBU|RFU|LMU
 };
 
 void setState(uint16_t newState) {
@@ -85,21 +110,19 @@ void setup() {
   DDRC=DDRC|0b01000000; //PC6
   DDRD=DDRD|0b10000011; //PD0, PD1, PD7
   DDRE=DDRE|0b01000000; //PE6
-  DDRF=DDRF|0b00010000; //PF4
-  Serial.begin(9600);
-  
+  DDRF=DDRF|0b00010000; //PF4  
 }
 
 void loop() {
   //setState(slow_wave[indice]);
   //setState(ripple_wave[indice]);
-  //setState(tripod_gate[indice]);
-  //setState(tetrapod_gate[indice]);
+  //setState(tripod_gait[indice]);
+  //setState(tetrapod_gait[indice]);
   
-  //if ( indice >= WAVE_GATE_LENGTH ) indice = 0;
-  //if ( indice >= RIPPLE_GATE_LENGTH ) indice = 0; 
-  //if ( indice >= TRIPOD_GATE_LENGTH ) indice = 0; 
-  //if ( indice >= TETRAPOD_GATE_LENGTH ) indice = 0; 
+  //if ( indice >= WAVE_GAIT_LENGTH ) indice = 0;
+  //if ( indice >= RIPPLE_GAIT_LENGTH ) indice = 0; 
+  //if ( indice >= TRIPOD_GAIT_LENGTH ) indice = 0; 
+  //if ( indice >= TETRAPOD_GAIT_LENGTH ) indice = 0; 
 
   indice++;
 }
